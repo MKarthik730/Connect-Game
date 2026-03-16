@@ -1,0 +1,56 @@
+.app {
+  text-align: center;
+  background: #1e1e1e;
+  min-height: 100vh;
+  color: rgb(237, 121, 121);
+  padding-top: 20px;
+}
+
+.setup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+  margin: auto;
+}
+
+.setup input,
+.setup select {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, 70px);
+  gap: 6px;
+  background: #0047ab;
+  padding: 10px;
+  margin: 15px auto;
+  border-radius: 10px;
+  
+  width: fit-content;  
+  margin-left: auto;   
+  margin-right: auto;
+}
+
+.cell {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+button {
+  color: darkgreen;
+  margin: 5px;
+  padding: 8px 14px;
+  font-size: 15px;
+}
