@@ -538,7 +538,12 @@
         }
 
         document.getElementById('create-room-btn').addEventListener('click', async () => {
-            state.playerName = document.getElementById('player-name').value.trim() || 'Player';
+            const name = document.getElementById('player-name').value.trim();
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
+            state.playerName = name;
             await createRoom();
         });
 
@@ -547,12 +552,17 @@
         });
 
         document.getElementById('join-confirm-btn').addEventListener('click', async () => {
+            const name = document.getElementById('player-name').value.trim();
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
             const code = document.getElementById('room-code-input').value.trim();
             if (code.length !== 4) {
                 alert('Please enter a 4-digit room code');
                 return;
             }
-            state.playerName = document.getElementById('player-name').value.trim() || 'Player';
+            state.playerName = name;
             state.roomCode = code;
             connectWebSocket();
         });
@@ -634,6 +644,8 @@
                 document.getElementById('disconnected-msg').classList.add('active');
                 state.status = 'waiting';
                 updateTurnIndicator();
+            } else if (data.type === 'error') {
+                alert(data.message);
             }
         }
 
@@ -681,18 +693,20 @@
             const boardEl = document.getElementById('board');
             boardEl.innerHTML = '';
 
+            const myColor = state.players[state.playerNum]?.color || state.playerColor;
+            const opponentColor = state.players[state.playerNum === 1 ? 2 : 1]?.color || state.opponentColor;
+
             for (let row = 0; row < 6; row++) {
                 for (let col = 0; col < 7; col++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     const value = state.board[row][col];
 
-                    if (value === 1) {
+                    if (value === state.playerNum) {
                         cell.classList.add('player1');
-                        cell.style.setProperty('--player1-color', state.playerColor);
-                    } else if (value === 2) {
+                        cell.style.setProperty('--player1-color', myColor);
+                    } else if (value !== 0) {
                         cell.classList.add('player2');
-                        const opponentColor = state.players[2]?.color || state.opponentColor;
                         cell.style.setProperty('--player2-color', opponentColor);
                     }
 
@@ -711,6 +725,7 @@
             const previewRow = document.getElementById('preview-row');
             previewRow.innerHTML = '';
             const isMyTurn = state.currentTurn === state.playerNum && state.status === 'playing';
+            const myColor = state.players[state.playerNum]?.color || state.playerColor;
 
             for (let col = 0; col < 7; col++) {
                 const previewCell = document.createElement('div');
@@ -718,7 +733,7 @@
 
                 const disc = document.createElement('div');
                 disc.className = 'preview-disc';
-                disc.style.background = state.playerColor;
+                disc.style.background = myColor;
 
                 if (!isMyTurn) {
                     previewCell.style.pointerEvents = 'none';

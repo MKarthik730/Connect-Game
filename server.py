@@ -169,9 +169,14 @@ async def handle_message(room: dict, ws_id: int, player_num: int, data: dict):
 
     if msg_type == "set_info":
         if player_num in room["players"]:
-            room["players"][player_num]["name"] = data.get(
-                "name", f"Player {player_num}"
-            )
+            player_name = data.get("name", "").strip()
+            if not player_name:
+                await room["sockets"][ws_id].send_json(
+                    {"type": "error", "message": "Name is required"}
+                )
+                return
+
+            room["players"][player_num]["name"] = player_name
 
             new_color = data.get("color", "#ff0000")
             other_player = 2 if player_num == 1 else 1
