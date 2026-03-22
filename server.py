@@ -173,6 +173,14 @@ async def handle_message(room: dict, ws_id: int, player_num: int, data: dict):
                 "name", f"Player {player_num}"
             )
             room["players"][player_num]["color"] = data.get("color", "#ff0000")
+
+        if (
+            len(room["players"]) == 2
+            and all(p.get("name") and p.get("color") for p in room["players"].values())
+            and room["status"] == "waiting"
+        ):
+            room["status"] = "playing"
+
         await broadcast_state(room)
 
     elif msg_type == "drop":
