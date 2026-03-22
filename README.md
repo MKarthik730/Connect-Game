@@ -1,4 +1,8 @@
+[
 
+![Connect Game](https://img.shields.io/badge/Live%20Demo-Connect%20Game-blue)
+
+](https://connect-game-1.onrender.com)
 🎮 Connect Four Game (React)
 
 A fully interactive Connect Four game built using React. This project demonstrates core frontend concepts like state management, component structure, and game logic implementation.
