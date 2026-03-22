@@ -12,9 +12,13 @@ app = FastAPI()
 
 BASE_DIR = Path(__file__).parent.resolve()
 STATIC_DIR = BASE_DIR / "static"
-INDEX_FILE = STATIC_DIR / "index.html"
 
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+if not STATIC_DIR.exists():
+    STATIC_DIR = BASE_DIR.parent / "static"
+if not STATIC_DIR.exists():
+    STATIC_DIR = Path("/app/static")
+
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 
 
 rooms: dict[str, dict] = {}
@@ -112,7 +116,10 @@ def get_room_state(room: dict) -> dict:
 
 @app.get("/")
 async def get_index():
-    return RedirectResponse(url="/static/index.html")
+    index_path = STATIC_DIR / "index.html"
+    if index_path.exists():
+        return HTMLResponse(content=index_path.read_text())
+    return HTMLResponse(content="<h1>index.html not found</h1>")
 
 
 @app.get("/create-room")
