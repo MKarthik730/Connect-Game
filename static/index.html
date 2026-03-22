@@ -81,6 +81,12 @@
             box-shadow: 0 0 15px currentColor;
         }
 
+        .color-option.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         .btn {
             padding: 12px 30px;
             font-size: 1rem;
@@ -506,11 +512,25 @@
         const colorOptions = document.querySelectorAll('.color-option');
         colorOptions.forEach(option => {
             option.addEventListener('click', () => {
+                if (option.classList.contains('disabled')) return;
                 colorOptions.forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
                 state.playerColor = option.dataset.color;
             });
         });
+
+        function updateAvailableColors() {
+            const opponentNum = state.playerNum === 1 ? 2 : 1;
+            const opponentColor = state.players[opponentNum]?.color;
+            
+            colorOptions.forEach(option => {
+                if (opponentColor && option.dataset.color === opponentColor) {
+                    option.classList.add('disabled');
+                } else {
+                    option.classList.remove('disabled');
+                }
+            });
+        }
 
         function showScreen(screenName) {
             Object.values(screens).forEach(s => s.classList.remove('active'));
@@ -630,6 +650,7 @@
 
             if (state.status === 'waiting' && state.players[1] && state.players[2]) {
                 showScreen('waiting');
+                updateAvailableColors();
                 return;
             }
 
@@ -638,11 +659,13 @@
                     showScreen('game');
                 }
                 renderGame();
+                updateAvailableColors();
             }
 
             if (state.status === 'finished') {
                 showScreen('game');
                 renderGame();
+                updateAvailableColors();
                 showGameOverlay();
             }
         }

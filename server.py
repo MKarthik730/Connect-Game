@@ -172,7 +172,28 @@ async def handle_message(room: dict, ws_id: int, player_num: int, data: dict):
             room["players"][player_num]["name"] = data.get(
                 "name", f"Player {player_num}"
             )
-            room["players"][player_num]["color"] = data.get("color", "#ff0000")
+
+            new_color = data.get("color", "#ff0000")
+            other_player = 2 if player_num == 1 else 1
+            other_color = room["players"].get(other_player, {}).get("color")
+
+            if other_color and new_color == other_color:
+                available_colors = [
+                    "#ff6b6b",
+                    "#4ecdc4",
+                    "#feca57",
+                    "#48dbfb",
+                    "#ff9ff3",
+                    "#54a0ff",
+                    "#5f27cd",
+                    "#ff9f43",
+                ]
+                for color in available_colors:
+                    if color != other_color:
+                        new_color = color
+                        break
+
+            room["players"][player_num]["color"] = new_color
 
         if (
             len(room["players"]) == 2
